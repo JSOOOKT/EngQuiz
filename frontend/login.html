@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - English Quiz Adventure</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 col-lg-4">
+                
+                <!-- Login Card -->
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        
+                        <!-- Logo/Title -->
+                        <div class="text-center mb-4">
+                            <h1 class="display-4">🎮</h1>
+                            <h2 class="card-title">Quiz Adventure</h2>
+                            <p class="text-muted">Login to start your journey</p>
+                        </div>
+                        
+                        <!-- Alert (hidden by default) -->
+                        <div id="alertBox" class="alert alert-danger d-none" role="alert">
+                            Invalid credentials
+                        </div>
+                        
+                        <!-- Login Form -->
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" 
+                                       placeholder="Enter username" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" 
+                                       placeholder="Enter password" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                Login
+                            </button>
+                        </form>
+                        
+                        <!-- Register Link -->
+                        <div class="text-center">
+                            <p class="text-muted">Don't have an account?</p>
+                            <a href="register.html" class="btn btn-outline-secondary w-100">
+                                Create Account
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/app.js"></script>
+    
+    <script>
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const alertBox = document.getElementById('alertBox');
+            
+            try {
+                // Call your backend API
+                const response = await fetch('http://localhost:8080/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Save user data
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Show success and redirect
+                    alertBox.className = 'alert alert-success';
+                    alertBox.textContent = 'Login successful! Redirecting...';
+                    alertBox.classList.remove('d-none');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    // Show error
+                    alertBox.className = 'alert alert-danger';
+                    alertBox.textContent = data.message;
+                    alertBox.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alertBox.className = 'alert alert-danger';
+                alertBox.textContent = 'Connection error. Is the backend running?';
+                alertBox.classList.remove('d-none');
+            }
+        });
+    </script>
+    
+</body>
+</html>
