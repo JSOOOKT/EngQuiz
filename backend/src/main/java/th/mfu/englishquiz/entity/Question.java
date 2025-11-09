@@ -19,6 +19,9 @@ public class Question {
     private Long id;
 
     private String questionText;
+    private String optionA; // <--- เพิ่ม
+    private String optionB; // <--- เพิ่ม
+    private String optionC; // <--- เพิ่ม
     private String correctAnswer;
 
     // Many Questions belong to One Quiz
@@ -68,4 +71,26 @@ public class Question {
     public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
     }
+
+    public String getOptionA() {
+        return optionA;
+    }
+    public void setOptionA(String optionA) {
+        this.optionA = optionA;
+    }
+
+    public String getOptionB() {
+        return optionB;
+    }
+
+    public void setOptionB(String optionB) {
+        this.optionB = optionB;
+    }
+    public String getOptionC() {
+        return optionC;
+    }
+    public void setOptionC(String optionC) {
+        this.optionC = optionC;
+    }
+    
 }

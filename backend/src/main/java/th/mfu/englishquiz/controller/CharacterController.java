@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import th.mfu.englishquiz.entity.GameCharacter;
 import th.mfu.englishquiz.repository.CharacterRepository;
 import th.mfu.englishquiz.entity.CharacterStatsUpdate;
+import th.mfu.englishquiz.entity.User;
 
 @RestController
 @RequestMapping("/characters")
@@ -100,6 +101,9 @@ public class CharacterController {
         }
 
         GameCharacter character = characterOptional.get();
+        User user = character.getUser();
+    if (user != null) {
+        user.setTotalScore(user.getTotalScore() + points);}
         
         GameCharacter savedCharacter = characterRepository.save(character);
         

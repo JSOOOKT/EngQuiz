@@ -27,20 +27,20 @@ VALUES
 (3, 'Audio Comprehension', 'Listening', 8, 'True/False', 3);
 
 -- QUESTION TABLE
-INSERT INTO question (id, questionText, correctAnswer, quiz_id)
+INSERT INTO question (id, questionText, optionA, optionB, optionC, optionD, correctAnswer, quiz_id)
 VALUES
--- Questions for Quiz 1: Present Tense Test (Grammar)
-(101, 'She ______ to the store every morning.', 'goes', 1),
-(102, 'They ______ playing soccer right now.', 'are', 1),
-(103, 'I ______ finished my homework yet.', 'haven''t', 1),
+-- Questions for Quiz 1
+(101, 'She ______ to the store every morning.', 'go', 'goes', 'going', 'went', 'goes', 1),
+(102, 'They ______ playing soccer right now.', 'is', 'are', 'was', 'be', 'are', 1),
+(103, 'I ______ finished my homework yet.', 'have', 'has', 'haven''t', 'had', 'haven''t', 1),
 
--- Questions for Quiz 2: Word Match Game (Vocabulary)
-(201, 'Which word means "very cold"?', 'freezing', 2),
-(202, 'What is the opposite of "ancient"?', 'modern', 2),
+-- Questions for Quiz 2
+(201, 'Which word means "very cold"?', 'warm', 'hot', 'freezing', 'cool', 'freezing', 2),
+(202, 'What is the opposite of "ancient"?', 'old', 'modern', 'new', 'recent', 'modern', 2),
 
--- Questions for Quiz 3: Audio Comprehension (Listening)
-(301, 'The speaker mentioned the weather was sunny. (True/False)', 'True', 3),
-(302, 'What time does the train leave?', '9:30 AM', 3);
+-- Questions for Quiz 3
+(301, 'The speaker mentioned the weather was sunny. (True/False)', 'True', 'False', NULL, NULL, 'True', 3),
+(302, 'What time does the train leave?', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '9:30 AM', 3);
 
 -- REWARD TABLE
 INSERT INTO reward (id, rewardName, pointRequired, user_id)
