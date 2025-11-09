@@ -1,266 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz - English Quiz Adventure</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="bg-light">
-    
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">🎮 Quiz Adventure</a>
-        </div>
-    </nav>
-    
-    <div class="container mt-5">
-        
-        <!-- Quiz Container -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                
-                <!-- Progress Bar -->
-                <div class="card shadow-lg mb-4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></span>
-                            <span>Score: <span id="currentScore">0</span></span>
-                        </div>
-                        <div class="progress" style="height: 10px;">
-                            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Question Card -->
-                <div class="card shadow-lg question-card" id="questionCard">
-                    <div class="card-body p-5">
-                        
-                        <!-- Question Text -->
-                        <h3 class="mb-4" id="questionText">Loading question...</h3>
-                        
-                        <!-- Answer Options -->
-                        <div id="optionsContainer">
-                            <!-- Options will be loaded here -->
-                        </div>
-                        
-                        <!-- Feedback Message -->
-                        <div id="feedbackBox" class="alert d-none mt-4" role="alert"></div>
-                        
-                        <!-- Next Button -->
-                        <button id="nextBtn" class="btn btn-primary w-100 mt-3 d-none">
-                            Next Question →
-                        </button>
-                        
-                    </div>
-                </div>
-                
-                <!-- Results Card (hidden initially) -->
-                <div class="card shadow-lg d-none" id="resultsCard">
-                    <div class="card-body p-5 text-center">
-                        <h1 class="display-1">🎉</h1>
-                        <h2 class="mb-4">Quiz Complete!</h2>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h3 class="text-primary" id="finalScore">0</h3>
-                                <p class="text-muted">Final Score</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h3 class="text-success" id="correctAnswers">0</h3>
-                                <p class="text-muted">Correct Answers</p>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <a href="index.html" class="btn btn-primary me-2">Back to Dashboard</a>
-                            <a href="leaderboard.html" class="btn btn-outline-secondary">View Leaderboard</a>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-    </div>
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="js/app.js"></script>
-
 <script>
-        // Check if user is logged in
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user) {
-            window.location.href = 'login.html';
+const user = getCurrentUser();
+if (!user) window.location.href = 'login.html';
+
+const urlParams = new URLSearchParams(window.location.search);
+const questId = urlParams.get('questId');
+if (!questId) { alert('No quest selected!'); window.location.href='index.html'; }
+
+let questions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let correctCount = 0;
+
+// Load quiz questions
+async function loadQuiz() {
+    try {
+        const quizzes = await getQuizzesByQuest(questId);
+        if (quizzes.length === 0) { alert('No quizzes available!'); window.location.href='index.html'; return; }
+
+        const quizId = quizzes[0].id;
+        const allQuestions = await getQuestions();
+        // Filter questions for this quiz
+        questions = allQuestions.filter(q => q.quiz && q.quiz.id === quizId);
+
+        if (questions.length === 0) { alert('No questions found!'); window.location.href='index.html'; return; }
+
+        document.getElementById('totalQuestions').textContent = questions.length;
+        displayQuestion();
+
+    } catch (error) {
+        console.error(error);
+        alert('Failed to load quiz.');
+        window.location.href='index.html';
+    }
+}
+
+function displayQuestion() {
+    if (currentQuestionIndex >= questions.length) { showResults(); return; }
+    const question = questions[currentQuestionIndex];
+
+    document.getElementById('currentQuestion').textContent = currentQuestionIndex+1;
+    const progress = ((currentQuestionIndex+1)/questions.length)*100;
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    document.getElementById('questionText').textContent = question.questionText;
+
+    const optionsContainer = document.getElementById('optionsContainer');
+    optionsContainer.innerHTML = '';
+
+    // Map backend options to A/B/C/D dynamically
+    ['optionA','optionB','optionC','optionD'].forEach(key=>{
+        if(question[key]){
+            const button = document.createElement('button');
+            button.className='option-btn';
+            button.innerHTML=`<strong>${key.slice(-1)}</strong>. ${question[key]}`;
+            button.onclick = () => checkAnswer(key.slice(-1), question.correctAnswer);
+            optionsContainer.appendChild(button);
         }
-        
-        // Get quest ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const questId = urlParams.get('questId');
-        
-        if (!questId) {
-            alert('No quest selected!');
-            window.location.href = 'index.html';
-        }
-        
-        // Quiz state
-        let questions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let correctCount = 0;
-        
-        // Load quiz questions
-        async function loadQuiz() {
-            try {
-                // Get quizzes for this quest
-                const quizzes = await getQuizzesByQuest(questId);
-                
-                if (quizzes.length === 0) {
-                    alert('No quizzes available for this quest!');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                // Get first quiz
-                const quizId = quizzes[0].id;
-                
-                // Get questions for this quiz
-                const allQuestions = await getQuestions();
-                
-                // Filter questions for this quiz
-                questions = allQuestions.filter(q => q.quiz && q.quiz.id === quizId);
-                
-                if (questions.length === 0) {
-                    alert('No questions available!');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                document.getElementById('totalQuestions').textContent = questions.length;
-                displayQuestion();
-                
-            } catch (error) {
-                console.error('Error loading quiz:', error);
-                alert('Failed to load quiz. Make sure backend is running.');
-                window.location.href = 'index.html';
-            }
-        }
-        
-        // Display current question
-        function displayQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                showResults();
-                return;
-            }
-            
-            const question = questions[currentQuestionIndex];
-            
-            // Update progress
-            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
-            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-            
-            // Display question
-            document.getElementById('questionText').textContent = question.questionText || question.text;
-            
-            // Create answer options (A, B, C, D)
-            const options = ['A', 'B', 'C', 'D'];
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            
-            options.forEach(option => {
-                const optionKey = `option${option}`;
-                if (question[optionKey]) {
-                    const button = document.createElement('button');
-                    button.className = 'option-btn';
-                    button.innerHTML = `<strong>${option}.</strong> ${question[optionKey]}`;
-                    button.onclick = () => checkAnswer(option, question.correctAnswer);
-                    optionsContainer.appendChild(button);
-                }
-            });
-            
-            // Hide feedback and next button
-            document.getElementById('feedbackBox').classList.add('d-none');
-            document.getElementById('nextBtn').classList.add('d-none');
-        }
-        
-        // Check answer
-        function checkAnswer(selectedOption, correctAnswer) {
-            const feedbackBox = document.getElementById('feedbackBox');
-            const optionButtons = document.querySelectorAll('.option-btn');
-            
-            // Disable all buttons
-            optionButtons.forEach(btn => btn.disabled = true);
-            
-            // Check if correct
-            const isCorrect = selectedOption === correctAnswer.toUpperCase() || 
-                              questions[currentQuestionIndex][`option${selectedOption}`] === correctAnswer;
-            
-            if (isCorrect) {
-                score += 10;
-                correctCount++;
-                feedbackBox.className = 'alert alert-success mt-4';
-                feedbackBox.innerHTML = '<strong>✓ Correct!</strong> Well done!';
-                
-                // Highlight correct answer
-                optionButtons.forEach(btn => {
-                    if (btn.innerHTML.includes(`<strong>${selectedOption}</strong>`)) {
-                        btn.classList.add('correct');
-                    }
-                });
-            } else {
-                feedbackBox.className = 'alert alert-danger mt-4';
-                feedbackBox.innerHTML = `<strong>✗ Incorrect!</strong> The correct answer was <strong>${correctAnswer}</strong>`;
-                
-                // Highlight wrong answer
-                optionButtons.forEach(btn => {
-                    if (btn.innerHTML.includes(`<strong>${selectedOption}</strong>`)) {
-                        btn.classList.add('incorrect');
-                    }
-                    if (btn.innerHTML.includes(`<strong>${correctAnswer}</strong>`)) {
-                        btn.classList.add('correct');
-                    }
-                });
-            }
-            
-            // Update score display
-            document.getElementById('currentScore').textContent = score;
-            
-            // Show feedback and next button
-            feedbackBox.classList.remove('d-none');
-            document.getElementById('nextBtn').classList.remove('d-none');
-        }
-        
-        // Next question handler
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            currentQuestionIndex++;
-            displayQuestion();
+    });
+
+    document.getElementById('feedbackBox').classList.add('d-none');
+    document.getElementById('nextBtn').classList.add('d-none');
+}
+
+function checkAnswer(selectedOption, correctAnswer){
+    const feedbackBox = document.getElementById('feedbackBox');
+    const optionButtons = document.querySelectorAll('.option-btn');
+    optionButtons.forEach(btn => btn.disabled = true);
+
+    const isCorrect = selectedOption === correctAnswer.toUpperCase() || 
+          questions[currentQuestionIndex][`option${selectedOption}`] === correctAnswer;
+
+    if(isCorrect){
+        score += 10;
+        correctCount++;
+        feedbackBox.className='alert alert-success mt-4';
+        feedbackBox.innerHTML='✓ Correct!';
+        optionButtons.forEach(btn => { if(btn.innerHTML.includes(selectedOption)) btn.classList.add('correct'); });
+    } else {
+        feedbackBox.className='alert alert-danger mt-4';
+        feedbackBox.innerHTML=`✗ Incorrect! Correct: ${correctAnswer}`;
+        optionButtons.forEach(btn=>{
+            if(btn.innerHTML.includes(selectedOption)) btn.classList.add('incorrect');
+            if(btn.innerHTML.includes(correctAnswer)) btn.classList.add('correct');
         });
-        
-        // Show results
-        function showResults() {
-            document.getElementById('questionCard').classList.add('d-none');
-            document.getElementById('resultsCard').classList.remove('d-none');
-            
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('correctAnswers').textContent = `${correctCount} / ${questions.length}`;
-            
-            // TODO: Save score to backend
-            // This would call your backend API to save the quiz attempt
-        }
-        
-        // Load quiz when page loads
-        loadQuiz();
-    </script>
-    
-</body>
-</html>
+    }
+
+    document.getElementById('currentScore').textContent = score;
+    feedbackBox.classList.remove('d-none');
+    document.getElementById('nextBtn').classList.remove('d-none');
+}
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+    currentQuestionIndex++;
+    displayQuestion();
+});
+
+async function showResults(){
+    document.getElementById('questionCard').classList.add('d-none');
+    document.getElementById('resultsCard').classList.remove('d-none');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('correctAnswers').textContent = `${correctCount} / ${questions.length}`;
+
+    // Save score to backend
+    await saveUserScore(user.id, score);
+}
+
+loadQuiz();
+</script>

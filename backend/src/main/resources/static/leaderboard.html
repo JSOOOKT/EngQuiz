@@ -107,27 +107,24 @@
         
         // Load leaderboard
         async function loadLeaderboard() {
-            try {
-                let users = await getLeaderboard();
-                // Display top 3
-                displayTopThree(users.slice(0, 3));
-                
-                // Display full leaderboard
-                displayLeaderboard(users);
-                
-            } catch (error) {
-                console.error('Error loading leaderboard:', error);
-                document.getElementById('leaderboardBody').innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center py-4">
-                            <div class="alert alert-danger mb-0">
-                                Failed to load leaderboard. Make sure backend is running.
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
+    try {
+        const users = await getLeaderboard();
+        displayTopThree(users.slice(0, 3));
+        displayLeaderboard(users);
+    } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        document.getElementById('leaderboardBody').innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center py-4">
+                    <div class="alert alert-danger mb-0">
+                        Failed to load leaderboard. Make sure backend is running.
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+}
+
         
         // Display top 3 players
         function displayTopThree(topUsers) {
