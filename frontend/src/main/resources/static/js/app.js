@@ -5,7 +5,7 @@
 // ========================================
 
 // Backend API URL - Change this if your backend runs on different port
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'https://ominous-space-goggles-pjwgjrwxj47jh77vv-8080.app.github.dev/';
 
 // ========================================
 // USER AUTHENTICATION HELPERS

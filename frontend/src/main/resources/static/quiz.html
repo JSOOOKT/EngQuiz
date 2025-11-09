@@ -120,7 +120,7 @@
         async function loadQuiz() {
             try {
                 // Get quizzes for this quest
-                const response = await fetch(`http://localhost:8080/quests/${questId}/quizzes`);
+                const response = await fetch(`hhttps://ominous-space-goggles-pjwgjrwxj47jh77vv-8080.app.github.dev/quizzes`);
                 const quizzes = await response.json();
                 
                 if (quizzes.length === 0) {
@@ -133,7 +133,7 @@
                 const quizId = quizzes[0].id;
                 
                 // Get questions for this quiz
-                const questionsResponse = await fetch(`http://localhost:8080/questions`);
+                const questionsResponse = await fetch(`https://ominous-space-goggles-pjwgjrwxj47jh77vv-8080.app.github.dev/questions`);
                 const allQuestions = await questionsResponse.json();
                 
                 // Filter questions for this quiz
