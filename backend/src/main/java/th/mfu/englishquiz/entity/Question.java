@@ -22,6 +22,7 @@ public class Question {
     private String optionA; // <--- เพิ่ม
     private String optionB; // <--- เพิ่ม
     private String optionC; // <--- เพิ่ม
+    private String optionD;
     private String correctAnswer;
 
     // Many Questions belong to One Quiz
@@ -92,5 +93,11 @@ public class Question {
     public void setOptionC(String optionC) {
         this.optionC = optionC;
     }
-    
+    public String getOptionD() {
+        return optionD;
+    }
+    public void setOptionD(String optionD) {
+        this.optionD = optionD;
+    }
+
 }
