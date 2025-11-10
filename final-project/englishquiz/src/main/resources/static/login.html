@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - English Quiz Adventure</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Clouds */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            opacity: 0.8;
+            animation: float 20s infinite linear;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+        }
+
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 10%;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 40px;
+            top: -15px;
+            right: 10px;
+        }
+
+        .cloud2 {
+            width: 120px;
+            height: 50px;
+            top: 25%;
+            left: -120px;
+            animation-duration: 30s;
+            animation-delay: 5s;
+        }
+
+        .cloud2::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 15px;
+        }
+
+        .cloud2::after {
+            width: 70px;
+            height: 50px;
+            top: -20px;
+            right: 15px;
+        }
+
+        .cloud3 {
+            width: 80px;
+            height: 35px;
+            top: 60%;
+            left: -80px;
+            animation-duration: 22s;
+            animation-delay: 10s;
+        }
+
+        .cloud3::before {
+            width: 45px;
+            height: 45px;
+            top: -20px;
+            left: 8px;
+        }
+
+        .cloud3::after {
+            width: 50px;
+            height: 35px;
+            top: -12px;
+            right: 8px;
+        }
+
+        @keyframes float {
+            0% {
+                left: -150px;
+            }
+            100% {
+                left: 110%;
+            }
+        }
+
+        /* Login Card - Parchment Style */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 450px;
+        }
+
+        .login-card {
+            background: linear-gradient(135deg, #FFF8DC 0%, #F5E6D3 100%);
+            border-radius: 15px;
+            padding: 30px 30px;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.2),
+                inset 0 0 50px rgba(101, 67, 33, 0.1);
+            border: 3px solid #8B7355;
+            position: relative;
+        }
+
+        /* Paper corners effect */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 30px 30px 0;
+            border-color: transparent #8B7355 transparent transparent;
+        }
+
+        .login-card::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 27px 27px 0;
+            border-color: transparent #D2B48C transparent transparent;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #654321;
+            margin-bottom: 5px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+        }
+
+        .login-subtitle {
+            color: #8B7355;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .form-label {
+            color: #654321;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #8B7355;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #654321;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: white;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+            outline: none;
+        }
+
+        .btn-adventure {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            border: 3px solid #8B7355;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-adventure:hover {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+        }
+
+        .btn-adventure:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #8B7355, transparent);
+        }
+
+        .divider span {
+            background: #FFF8DC;
+            padding: 0 15px;
+            position: relative;
+            color: #8B7355;
+            font-weight: 600;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 10px;
+            color: #654321;
+        }
+
+        .signup-link a {
+            color: #D4AF37;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: 2px solid;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: #FFE4E4;
+            border-color: #DC3545;
+            color: #721C24;
+        }
+
+        .alert-success {
+            background: #D4EDDA;
+            border-color: #28A745;
+            color: #155724;
+        }
+
+        /* Adventure Icon */
+        .adventure-icon {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 40px 25px;
+            }
+            
+            .login-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Animated Clouds -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+    
+    <div class="login-container">
+        <div class="login-card">
+            
+            <!-- Adventure Icon -->
+            <div class="adventure-icon">🎮</div>
+            
+            <!-- Title -->
+            <h1 class="login-title">Welcome back, Adventurer!</h1>
+            <p class="login-subtitle">Log in to continue your quest</p>
+            
+            <!-- Alert (hidden by default) -->
+            <div id="alertBox" class="alert alert-danger d-none" role="alert">
+                Invalid credentials
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">⚔️ Username</label>
+                    <input type="text" class="form-control" id="username" 
+                           placeholder="Enter your username" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">🔐 Password</label>
+                    <input type="password" class="form-control" id="password" 
+                           placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn-adventure">
+                    🚀 Start Adventure
+                </button>
+            </form>
+            
+            <!-- Divider -->
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <!-- Sign Up Link -->
+            <div class="signup-link">
+                <p>Don't have an account?</p>
+                <a href="register.html">📝 Create New Account</a>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="app.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    const alertBox = document.getElementById('alertBox');
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!username || !password) {
+            alertBox.className = 'alert alert-danger';
+            alertBox.innerHTML = '⚠️ Please enter username and password';
+            alertBox.classList.remove('d-none');
+            return;
+        }
+
+        try {
+            // Call backend login
+            const data = await loginUser(username, password);
+
+            console.log('Login response:', data); // Debug
+
+            // Check if login was successful
+            if (data && data.success && data.user) {
+                // Save user to localStorage
+                saveUser(data.user);
+
+                // Show success message
+                alertBox.className = 'alert alert-success';
+                alertBox.innerHTML = '✅ Login successful! Redirecting...';
+                alertBox.classList.remove('d-none');
+
+                // Redirect after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                // Login failed
+                alertBox.className = 'alert alert-danger';
+                alertBox.innerHTML = '❌ ' + (data.message || 'Invalid username or password');
+                alertBox.classList.remove('d-none');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alertBox.className = 'alert alert-danger';
+            alertBox.innerHTML = '⚠️ Connection error. Backend might not be running.';
+            alertBox.classList.remove('d-none');
+        }
+    });
+});
+</script>
+
+    
+</body>
+</html>
